@@ -43,7 +43,7 @@ line. Action files are plain JSON files with a structure like this:
         ],
     "path/to/another/file": [
         "another-program",
-        "another-arg",
+        "another-arg"
         ]
 }
 ```
