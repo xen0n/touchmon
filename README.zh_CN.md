@@ -33,7 +33,7 @@
         ],
     "path/to/another/file": [
         "another-program",
-        "another-arg",
+        "another-arg"
         ]
 }
 ```
