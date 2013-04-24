@@ -5,6 +5,7 @@ from __future__ import unicode_literals, division, print_function
 
 import sys
 import os
+import pwd
 import time
 import subprocess
 
@@ -16,6 +17,13 @@ except ImportError:
 import pyinotify
 
 MASK = pyinotify.IN_CLOSE_WRITE
+
+
+def demote(username):
+    pw = pwd.getpwnam(username)
+    uid, gid = pw.pw_uid, pw.pw_gid
+    os.setgid(gid)
+    os.setuid(uid)
 
 
 class TouchHandler(pyinotify.ProcessEvent):
@@ -35,7 +43,13 @@ class TouchHandler(pyinotify.ProcessEvent):
             # mtime newer than previous examination
             self._mtimes[fname] = s.st_mtime
             # print fname
-            chld = subprocess.Popen(self._actions[fname], env={})
+
+            action = self._actions[fname]
+            chld = subprocess.Popen(
+                    action['argv'],
+                    env={},
+                    preexec_fn=(lambda: demote(action['user'])),
+                    )
             chld.communicate()
 
 

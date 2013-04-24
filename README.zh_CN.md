@@ -26,15 +26,21 @@
 
 ```json
 {
-    "path/to/file/to/monitor": [
-        "program-name",
-        "argv[1]",
-        "argv[2]"
-        ],
-    "path/to/another/file": [
-        "another-program",
-        "another-arg"
-        ]
+    "path/to/file/to/monitor": {
+        "argv": [
+            "program-name",
+            "argv[1]",
+            "argv[2]"
+            ],
+        "user": "user1"
+        },
+    "path/to/another/file": {
+        "argv": [
+            "another-program",
+            "another-arg"
+            ],
+        "user": "user2"
+        }
 }
 ```
 
@@ -45,7 +51,7 @@
 
 脚本接受一个或多个动作文件作为参数：
 
-    $ ./touchmon.py path/to/action1.json path/to/action2.json
+    # ./touchmon.py path/to/action1.json path/to/action2.json
 
 `.json` 扩展名不是必需的，但推荐使用它让文件名清晰一点。动作文件是按照指定的顺序读取的；如果为同一个文件定义了多个动作，只有最后一个会生效。
 
@@ -57,7 +63,7 @@
     autostart=true
     autorestart=unexpected
     stopsignal=INT
-    user=exampleuser
+    user=root
 
 
 ### 在 virtualenv 中运行
@@ -67,6 +73,11 @@
     environment=PATH=/path/to/venv/bin,VIRTUALENV=/path/to/venv
 
 这就让脚本明白它应该处于的环境了。
+
+
+## 安全性
+
+为了给子进程 `set{u,g}id`，`touchmon` 必须以 root 身份运行。因为程序除了监视文件之外不干别的事情了，这应该没什么问题。不过如果你真注意到有安全问题了，请告诉我一声。
 
 
 ## 许可证
