@@ -36,15 +36,21 @@ line. Action files are plain JSON files with a structure like this:
 
 ```json
 {
-    "path/to/file/to/monitor": [
-        "program-name",
-        "argv[1]",
-        "argv[2]"
-        ],
-    "path/to/another/file": [
-        "another-program",
-        "another-arg"
-        ]
+    "path/to/file/to/monitor": {
+        "argv": [
+            "program-name",
+            "argv[1]",
+            "argv[2]"
+            ],
+        "user": "user1"
+        },
+    "path/to/another/file": {
+        "argv": [
+            "another-program",
+            "another-arg"
+            ],
+        "user": "user2"
+        }
 }
 ```
 
@@ -55,7 +61,7 @@ line. Action files are plain JSON files with a structure like this:
 
 The script is invoked with a list of action files:
 
-    $ ./touchmon.py path/to/action1.json path/to/action2.json
+    # ./touchmon.py path/to/action1.json path/to/action2.json
 
 The `.json` extension is not required, but recommended to keep the name clear.
 Action files are read in the order specified; if more than one action for a
@@ -71,7 +77,7 @@ entry to put in `supervisord.conf`:
     autostart=true
     autorestart=unexpected
     stopsignal=INT
-    user=exampleuser
+    user=root
 
 
 ### Running inside a virtualenv
@@ -84,6 +90,13 @@ would only have to add one extra line in the program entry described earlier:
     environment=PATH=/path/to/venv/bin,VIRTUALENV=/path/to/venv
 
 That makes the script aware of its intended environment.
+
+
+## Security
+
+To be able to `set{g,u}id` its subprocesses, `touchmon` must be run as root.
+As the program does nothing except watching the files, this should not be
+a problem. However, if you do notice some security flaws, please notice me.
 
 
 ## License
